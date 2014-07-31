@@ -735,9 +735,9 @@ void EUTelProcessorSparseClustering::bookHistos() {
 		  histoInfo = histoMgr->getHistogramInfo(  _eventMultiplicityHistoName );
 		  if ( histoInfo ) {
 		    streamlog_out ( DEBUG2 ) << (* histoInfo ) << std::endl;
-		    /*eventMultiNBin  = histoInfo->_xBin;
+		    eventMultiNBin  = histoInfo->_xBin;
 		    eventMultiMin   = histoInfo->_xMin;
-		    eventMultiMax   = histoInfo->_xMax;*/
+		    eventMultiMax   = histoInfo->_xMax;
 		    if ( histoInfo->_title != "" ) eventMultiTitle = histoInfo->_title;
 		  }
 		}
