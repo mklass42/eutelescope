@@ -62,6 +62,7 @@ using namespace eutelescope;
 std::string EUTelHistogramMaker::_clusterSignalHistoName      = "clusterSignal";
 std::string EUTelHistogramMaker::_seedSignalHistoName         = "seedSignal";
 std::string EUTelHistogramMaker::_hitMapHistoName             = "hitMap";
+std::string EUTelHistogramMaker::_hitMap2HistoName            = "hitMap2";
 std::string EUTelHistogramMaker::_seedSNRHistoName            = "seedSNR";
 std::string EUTelHistogramMaker::_clusterNoiseHistoName       = "clusterNoise";
 std::string EUTelHistogramMaker::_clusterSNRHistoName         = "clusterSNR";
@@ -322,6 +323,13 @@ void EUTelHistogramMaker::processEvent (LCEvent * evt) {
       cluster->getCenterCoord(xSeed, ySeed);
       (dynamic_cast<AIDA::IHistogram2D*> (_aidaHistoMap[tempHistoName]))->fill(static_cast<double >(xSeed), static_cast<double >(ySeed), 1.);
 
+      //try build histo 2
+      tempHistoName = _hitMap2HistoName + "_d" + to_string(detectorID);
+      cluster->getCenterCoord(xSeed, ySeed);
+      (dynamic_cast<AIDA::IHistogram2D*> (_aidaHistoMap[tempHistoName]))->fill(static_cast<double >(xSeed), static_cast<double >(ySeed), 1.);
+      //end try histo 2
+
+      
       if ( _noiseHistoSwitch ) 
       {
         TrackerDataImpl    * noiseMatrix = NULL;
@@ -530,6 +538,8 @@ void EUTelHistogramMaker::processEvent (LCEvent * evt) {
 void EUTelHistogramMaker::check (LCEvent * /*  evt */) {
   // nothing to check here - could be used to fill check plots in reconstruction processor
 }
+
+
 
 
 void EUTelHistogramMaker::end() {
@@ -782,6 +792,17 @@ void EUTelHistogramMaker::bookHistos() {
     _aidaHistoMap.insert(make_pair(tempHistoName, hitMapHisto));
     hitMapHisto->setTitle("Hit map");
 
+
+    // trz duplicating a histogram
+    tempHistoName =  _hitMap2HistoName + "_d" + to_string( _sensorIDVec.at( iDetector ));
+    AIDA::IHistogram2D * hitMap2Histo =
+      AIDAProcessor::histogramFactory(this)->createHistogram2D( (basePath + tempHistoName).c_str(),
+                                                                xBin, xMin, xMax,yBin, yMin, yMax);
+    _aidaHistoMap.insert(make_pair(tempHistoName, hitMap2Histo));
+    hitMap2Histo->setTitle("Hit map2");
+    //end try
+    
+    
     tempHistoName = _eventMultiplicityHistoName + "_d" + to_string( _sensorIDVec.at( iDetector ) );
     int     eventMultiNBin  = 30;
     double  eventMultiMin   =  0.;

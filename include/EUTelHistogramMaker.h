@@ -63,7 +63,12 @@ namespace eutelescope {
    *  with each bin representing one pixel in the sensor. The number
    *  of entries for each bin corresponds to the number of times a
    *  seed pixel has been found on that pixel.
-   *
+
+   *  @li <b> Hit map</b> (histo name = "hitMap2"). This is a 2D plot
+   *  with each bin representing one pixel in the sensor. The number
+   *  of entries for each bin corresponds to the number of times a
+   *  seed pixel has been found on that pixel.
+   
    *  <h4>Input collections </h4>
    *  A tracker pulse collection with clusters to be histogrammed.
    *
@@ -300,6 +305,17 @@ namespace eutelescope {
     //! Seed pixel SNR name
     /*! This is the seed pixel SNR histogram name
      */
+
+
+    //try copy hitmap
+    static std::string _hitMap2HistoName;
+
+    //! Seed pixel SNR name
+    /*! This is the seed pixel SNR histogram name
+     */
+    //end copy hitmap
+
+
     static std::string _seedSNRHistoName;
 
     //! Cluster SNR histogram name

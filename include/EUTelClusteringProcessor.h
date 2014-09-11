@@ -806,6 +806,9 @@ namespace eutelescope {
     //! Map for pointer to Hit map histogram 
      std::map<int,AIDA::IBaseHistogram*> _hitMapHistos;
 
+    //! Map for pointer to Hit map histogram 
+     std::map<int,AIDA::IBaseHistogram*> _hitMap2Histos;
+
     //! Map for pointer to Seed pixel SNR 
     std::map<int,AIDA::IBaseHistogram*> _seedSNRHistos;
 

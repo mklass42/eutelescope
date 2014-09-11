@@ -109,6 +109,7 @@ EUTelClusteringProcessor::EUTelClusteringProcessor ()
   _clusterSizeYHistos(),
   _seedSignalHistos(),
   _hitMapHistos(),
+  _hitMap2Histos(),
   _seedSNRHistos(),
   _clusterNoiseHistos(),
   _clusterSNRHistos(),
@@ -2108,7 +2109,7 @@ void EUTelClusteringProcessor::sparseClustering(LCEvent* evt, LCCollectionVec* p
 	CellIDEncoder<TrackerPulseImpl> idZSPulseEncoder(EUTELESCOPE::PULSEDEFAULTENCODING, pulseCollection);
 
 	// in the zsInputDataCollectionVec we should have one TrackerData for each
-	// detector working in ZS mode. We need to loop over all of them
+	// detector workin seed pixel has been found on that pixel. in ZS mode. We need to loop over all of them
 	for ( unsigned int idetector = 0 ; idetector < zsInputDataCollectionVec->size(); idetector++ )
 	{
 		// get the TrackerData and guess which kind of sparsified data it contains.
@@ -2413,6 +2414,7 @@ void EUTelClusteringProcessor::fixedFrameClustering(LCEvent * evt, LCCollectionV
 
     _seedCandidateMap.clear();
 
+   //  seed pixel has been found on that pixel.
     for (unsigned int iPixel = 0; iPixel < nzsData->getChargeValues().size(); iPixel++) 
     {
         if (status->getADCValues()[iPixel] == EUTELESCOPE::GOODPIXEL) 
@@ -3121,6 +3123,12 @@ void EUTelClusteringProcessor::fillHistos (LCEvent * evt) {
       (dynamic_cast<AIDA::IHistogram2D*> (_hitMapHistos[detectorID]))
         ->fill(static_cast<double >(xSeed), static_cast<double >(ySeed), 1.);
 
+     // plot the seed charge an other time
+  
+      (dynamic_cast<AIDA::IHistogram2D*> (_hitMap2Histos[detectorID]))
+        ->fill(static_cast<double >(xSeed), static_cast<double >(ySeed), 1.);
+     //end copy seed charge
+
 
       // fill the noise related histograms
 
@@ -3291,6 +3299,7 @@ void EUTelClusteringProcessor::bookHistos() {
   std::string _clusterSizeYHistoName       = "clusterSizeY";
   std::string _seedSignalHistoName         = "seedSignal";
   std::string _hitMapHistoName             = "hitMap";
+  std::string _hitMap2HistoName            = "hitMap2";
   std::string _seedSNRHistoName            = "seedSNR";
   std::string _clusterNoiseHistoName       = "clusterNoise";
   std::string _clusterSNRHistoName         = "clusterSNR";
@@ -3588,6 +3597,15 @@ void EUTelClusteringProcessor::bookHistos() {
                                                                 xBin, xMin, xMax,yBin, yMin, yMax);
     _hitMapHistos.insert(make_pair(sensorID, hitMapHisto));
     hitMapHisto->setTitle("Hit map");
+   
+ //test to create second histo
+    tempHistoName = _hitMap2HistoName + "_d" + to_string( sensorID );
+    AIDA::IHistogram2D * hitMap2Histo =
+      AIDAProcessor::histogramFactory(this)->createHistogram2D( (basePath + tempHistoName).c_str(),
+                                                                xBin, xMin, xMax,yBin, yMin, yMax);
+    _hitMap2Histos.insert(make_pair(sensorID, hitMap2Histo));
+    hitMap2Histo->setTitle("Hit map2");
+    //end test
 
     tempHistoName = _eventMultiplicityHistoName + "_d" + to_string( sensorID );
     int     eventMultiNBin  = 60;

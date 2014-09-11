@@ -31,6 +31,11 @@
 #include <vector>
 #include <map>
 
+//include ROOT<.h>
+#include "TROOT.h"
+#include "TFile.h"
+#include "TTree.h"
+
 namespace eutelescope {
 
 
@@ -136,11 +141,47 @@ namespace eutelescope {
      */
     void bookHistos();
 
+    //! Book histograms
+    /*! This method is used to books all required
+     *  histograms. Histogram pointers are stored into
+     *  _aidaHistoMap so that they can be recalled and filled
+     * from anywhere in the code.
+     */
+    void bookHistosNeighbours();
+
+
+	//! Write tree for distance messurement
+	/*! This method is used to write all required trees
+	*/
+	void treedistw(); 
+
+    //! Read tree for distance messurement
+	/*! This method is used to write all required trees to histograms
+	*/
+	void treedistr(); 
+
+	//!Write tree for neihborurs and clustercharge
+
+	void treeneighbourw();
+
+
 
     //! Called after data processing for clean up.
     /*! Used to release memory allocated in init() step
      */
     virtual void end() ;
+
+
+#if defined(USE_AIDA) || defined(MARLIN_USE_AIDA)
+    //! Fill histograms
+    /*! This method is called for each event and the cluster
+     *  information are inserted into specific AIDA histograms.
+     *
+     *  @param evt The current event object
+     */
+    void fillHistos(LCEvent * evt);
+#endif
+    
 
   protected:
 
@@ -171,7 +212,7 @@ namespace eutelescope {
     std::string _inputColName ;
 
     //! Input \c TrackerHit collection name
-    std::string _inputDUTColName ;
+    std::string _inputHitColName ;
 
     //! Flag for manual DUT selection
 
@@ -179,17 +220,34 @@ namespace eutelescope {
 
     //! Id of telescope layer which should be used as DUT
 
-    int _manualDUTid;
+    int _DUTid;
 
     //!  Value to be used for missing measurements
     double _missingValue;
 
+	//! Include FinderRadius
+	double _FinderRadius;
+
+	//! Input \c Hit collection name 
+	//std::string _inputalignedHitColName;
+
     // Setup description
-
+	int _numberalltracks;
+	int _Tracknumberintern;
     int _nTelPlanes;
-
+    int _nHitCol;
+    int _TOTnTrack;
+	double _dutCharge;
+	double _dutQ;
+	int dutClusterSizeXdist;
+	int dutClusterSizeYdist;
+	int _dutClusterSizeX;
+	int _dutClusterSizeY;
+	double * _distXmin;
+	double * _distYmin;
+	double * _distRmin;
     int * _planeSort;
-    int * _planeID;
+    std::vector<int> * _planeID;
     double * _planePosition;
     bool   * _isActive;
 
@@ -198,16 +256,45 @@ namespace eutelescope {
     double * _measuredY;
     double * _measuredZ;
     double * _measuredQ;
+    double * _measuredCharge;
 
     bool   * _isFitted;
     double * _fittedX;
     double * _fittedY;
+    double * _fittedZ;
 
     int _iDUT;
     double _zDUT;
     double _distMax;
     std::vector<float > _DUTalign;
+	
+	//hit distnance array
+	std::vector< double* >* _dutHitcoordinatesLocal;
+	//counter neighours	
+	//int * _FitHitwithneigbours;
+	int _numberneighbor;
+	int _TOT;
 
+	//pixel information
+	int _nPixHits;
+	std::vector<int>* _p_col;
+	std::vector<int>* _p_row;
+	std::vector<int>* _p_tot;
+	std::vector<int>* _p_lv1;
+
+	//dut information with neighbors
+	std::vector<int> _dut_Q;
+	std::vector<int> _dut_ClusterSize;
+	std::vector<int> _dut_ClusterSizeY;
+	std::vector<int> _dut_neighbor;
+	std::vector<int>* _dut_tracknumberintern;
+	std::vector<int> _dut_tracknumber;
+	std::vector<double> _nearestrackdistRadius;
+
+	int _dut_Q2;
+	int _dut_ClusterSize2;
+	int _dut_neighbor2;
+	double _nearestrackdistRadius2;
     // Internal processor variables
     // ----------------------------
 
@@ -217,13 +304,49 @@ namespace eutelescope {
     int _evtNr;
     long int  _tluTimeStamp;
 
+	Int_t nneighbours,dutclustersizeX,dutclustersizeY,dutclusterTOT,Tracknumber;
+	Double_t nearestrackdistRadius;
+	TFile* tneigh;
+	TTree* treeneigh;
+
 
 #if defined(USE_AIDA) || defined(MARLIN_USE_AIDA)
+
+    //! Map for pointer to Distance hit to hit histogram (size along X).
+    //std::map<int,AIDA::IBaseHistogram*> _distancehitsXHistos;
+    
+    static std::string _DistTupleName;
+    
+    std::vector<AIDA::ITuple*> _DistTuple;
+
+	/*static std::string _DistTuple1Name;
+    
+    AIDA::ITuple *_DistTuple1;
+	static std::string _DistTupleName;
+    
+    AIDA::ITuple *_DistTuple2;
+	static std::string _DistTuple2Name;
+    
+    AIDA::ITuple *_DistTuple3;
+	static std::string _DistTuple3Name;
+    
+    AIDA::ITuple *_DistTuple3;
+	static std::string _DistTuple4Name;
+    
+    AIDA::ITuple *_DistTuple4;
+
+	static std::string _DistTupl5eName;
+    
+    AIDA::ITuple *_DistTuple5;
+	static std::string _DistTuple6Name;
+    
+    AIDA::ITuple *_DistTuple6;*/
 
 
     static std::string _FitTupleName;
 
     AIDA::ITuple * _FitTuple;
+    AIDA::ITuple * _NeighbourTuple;
 
 #endif
 
